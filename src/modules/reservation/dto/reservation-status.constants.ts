@@ -1,0 +1,6 @@
+export const RESERVATION_STATUS_VALUES = [
+  'PENDING',
+  'CONFIRMED',
+  'CANCELLED',
+  'COMPLETED',
+] as const;
