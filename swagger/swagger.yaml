@@ -1,0 +1,3298 @@
+openapi: 3.0.0
+paths:
+  /:
+    get:
+      description: Devuelve un mensaje corto que permite validar que la API está en línea.
+      operationId: AppController_getHello
+      parameters: []
+      responses:
+        "200":
+          description: Mensaje de bienvenida del servicio.
+          content:
+            application/json:
+              schema:
+                type: string
+      summary: Estado del servicio
+      tags:
+        - Root
+  /subscriptions:
+    get:
+      description: Obtiene las suscripciones activas o históricas con paginación opcional.
+      operationId: SubscriptionController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Número de suscripciones a omitir antes de iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de suscripciones a devolver en la página.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Suscripciones recuperadas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SubscriptionResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar suscripciones
+      tags: &a1
+        - Subscriptions
+    post:
+      description: Registra una nueva suscripción para un usuario y restaurante.
+      operationId: SubscriptionController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos necesarios para crear la suscripción.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubscriptionDto"
+      responses:
+        "201":
+          description: Suscripción creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Crear suscripción
+      tags: *a1
+  /subscriptions/{id}:
+    get:
+      description: Devuelve el detalle de una suscripción por su identificador.
+      operationId: SubscriptionController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la suscripción
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Suscripción encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la suscripción solicitada.
+      summary: Consultar suscripción
+      tags: *a1
+    put:
+      description: Modifica los campos permitidos de una suscripción existente.
+      operationId: SubscriptionController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la suscripción
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Datos a modificar en la suscripción.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSubscriptionDto"
+      responses:
+        "200":
+          description: Suscripción actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró la suscripción a actualizar.
+      summary: Actualizar suscripción
+      tags: *a1
+    delete:
+      description: Elimina permanentemente una suscripción registrada.
+      operationId: SubscriptionController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la suscripción
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Suscripción eliminada.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: La suscripción indicada no existe.
+      summary: Eliminar suscripción
+      tags: *a1
+  /users:
+    get:
+      description: Obtiene el listado de usuarios registrados con paginación opcional.
+      operationId: UserController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Cantidad de registros a omitir al iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Número máximo de usuarios a devolver en la página.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Usuarios recuperados.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar usuarios
+      tags: &a2
+        - Users
+    post:
+      description: Registra un nuevo usuario dentro de la plataforma.
+      operationId: UserController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos necesarios para crear al usuario.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
+      responses:
+        "201":
+          description: Usuario creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDto"
+        "400":
+          description: Los datos proporcionados no son válidos.
+      summary: Crear usuario
+      tags: *a2
+  /users/{id}:
+    get:
+      description: Recupera el detalle de un usuario mediante su identificador.
+      operationId: UserController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del usuario
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Usuario encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró el usuario solicitado.
+      summary: Consultar usuario
+      tags: *a2
+    put:
+      description: Actualiza los campos permitidos de un usuario existente.
+      operationId: UserController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del usuario
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Campos que se desean modificar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: Usuario actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDto"
+        "400":
+          description: Los datos de actualización no son válidos.
+        "404":
+          description: No se encontró el usuario a actualizar.
+      summary: Actualizar usuario
+      tags: *a2
+    delete:
+      description: Elimina definitivamente a un usuario de la plataforma.
+      operationId: UserController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del usuario
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Usuario eliminado correctamente.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró el usuario a eliminar.
+      summary: Eliminar usuario
+      tags: *a2
+  /dishes:
+    get:
+      description: Devuelve un listado paginado de platillos disponibles filtrando por
+        desplazamiento y límite opcional.
+      operationId: DishController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Cantidad de registros a omitir antes de iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de registros a recuperar en la página.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Listado paginado de platillos recuperado exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DishResponseDto"
+        "400":
+          description: Parámetros de paginación inválidos.
+      summary: Listar platillos
+      tags: &a3
+        - Dishes
+    post:
+      description: Registra un nuevo platillo asociado a un restaurante y menú determinados.
+      operationId: DishController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Cuerpo de la petición con los datos del platillo a crear.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDishDto"
+      responses:
+        "201":
+          description: Platillo creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DishResponseDto"
+        "400":
+          description: La solicitud contiene datos inválidos o incompletos.
+      summary: Crear un platillo
+      tags: *a3
+  /dishes/{id}:
+    get:
+      description: Recupera la información de un platillo mediante su identificador.
+      operationId: DishController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del platillo
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Platillo encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DishResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró un platillo con el identificador proporcionado.
+      summary: Consultar un platillo
+      tags: *a3
+    put:
+      description: Modifica los campos permitidos de un platillo existente.
+      operationId: DishController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del platillo
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Cuerpo de la petición con los datos a actualizar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDishDto"
+      responses:
+        "200":
+          description: Platillo actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DishResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró el platillo a actualizar.
+      summary: Actualizar un platillo
+      tags: *a3
+    delete:
+      description: Elimina de forma permanente un platillo, incluyendo sus
+        asociaciones con menús o imágenes.
+      operationId: DishController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del platillo
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Platillo eliminado correctamente.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró el platillo a eliminar.
+      summary: Eliminar un platillo
+      tags: *a3
+  /images:
+    get:
+      description: Recupera de forma paginada los recursos multimedia disponibles para
+        menús, platillos y espacios.
+      operationId: ImageController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Número de elementos a omitir antes de iniciar la paginación.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de elementos que se devolverán en la página actual.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Listado de imágenes obtenido.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ImageResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar imágenes
+      tags: &a4
+        - Images
+    post:
+      description: Guarda un nuevo recurso multimedia con sus metadatos descriptivos.
+      operationId: ImageController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Carga útil con los datos de la imagen a registrar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateImageDto"
+      responses:
+        "201":
+          description: Imagen creada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Registrar una imagen
+      tags: *a4
+  /images/{id}:
+    get:
+      description: Devuelve la información detallada de una imagen por su identificador.
+      operationId: ImageController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la imagen
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Imagen encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la imagen solicitada.
+      summary: Consultar una imagen
+      tags: *a4
+    put:
+      description: Modifica los atributos permitidos de una imagen previamente almacenada.
+      operationId: ImageController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la imagen
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Carga útil con los campos a modificar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateImageDto"
+      responses:
+        "200":
+          description: Imagen actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: La imagen indicada no existe.
+      summary: Actualizar una imagen
+      tags: *a4
+    delete:
+      description: Elimina permanentemente un recurso multimedia registrado.
+      operationId: ImageController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la imagen
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Imagen eliminada correctamente.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la imagen solicitada.
+      summary: Eliminar una imagen
+      tags: *a4
+  /layout-objects:
+    get:
+      description: Devuelve los elementos diseñados en el plano del restaurante,
+        permitiendo paginación.
+      operationId: LayoutObjectController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Registros a omitir al iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Número máximo de registros dentro de la página actual.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Objetos de layout recuperados exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LayoutObjectResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar objetos de layout
+      tags: &a5
+        - Layout Objects
+    post:
+      description: Registra un nuevo elemento dentro del plano del restaurante.
+      operationId: LayoutObjectController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Carga útil con los datos del objeto a registrar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLayoutObjectDto"
+      responses:
+        "201":
+          description: Objeto de layout creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LayoutObjectResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Crear objeto de layout
+      tags: *a5
+  /layout-objects/{id}:
+    get:
+      description: Obtiene el detalle completo de un objeto de layout por su identificador.
+      operationId: LayoutObjectController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del objeto de layout
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Objeto de layout encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LayoutObjectResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró el objeto de layout solicitado.
+      summary: Consultar objeto de layout
+      tags: *a5
+    put:
+      description: Modifica los valores permitidos de un objeto representado en el plano.
+      operationId: LayoutObjectController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del objeto de layout
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Carga útil con los campos a actualizar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLayoutObjectDto"
+      responses:
+        "200":
+          description: Objeto de layout actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LayoutObjectResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró el objeto de layout para actualizar.
+      summary: Actualizar objeto de layout
+      tags: *a5
+    delete:
+      description: Elimina de forma permanente un elemento del plano.
+      operationId: LayoutObjectController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del objeto de layout
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Objeto de layout eliminado.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: El objeto de layout indicado no existe.
+      summary: Eliminar objeto de layout
+      tags: *a5
+  /menus:
+    get:
+      description: Obtiene de forma paginada los menús registrados para los distintos
+        restaurantes.
+      operationId: MenuController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Cantidad de registros a omitir antes de devolver resultados.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Número máximo de registros paginados que se devolverán.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Listado de menús recuperado.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MenuResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar menús
+      tags: &a6
+        - Menus
+    post:
+      description: Registra un menú dentro de un restaurante, con su información principal.
+      operationId: MenuController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Carga útil con los datos del menú a registrar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMenuDto"
+      responses:
+        "201":
+          description: Menú creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuResponseDto"
+        "400":
+          description: Datos de creación inválidos o faltantes.
+      summary: Crear un nuevo menú
+      tags: *a6
+  /menus/{id}:
+    get:
+      description: Recupera el detalle de un menú específico por su identificador.
+      operationId: MenuController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del menú
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Menú encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuResponseDto"
+        "400":
+          description: El identificador proporcionado es inválido.
+        "404":
+          description: No existe un menú con el identificador indicado.
+      summary: Consultar un menú
+      tags: *a6
+    put:
+      description: Actualiza los campos permitidos de un menú previamente registrado.
+      operationId: MenuController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del menú
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Carga útil con los atributos del menú a modificar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMenuDto"
+      responses:
+        "200":
+          description: Menú actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se localizó el menú a actualizar.
+      summary: Actualizar un menú existente
+      tags: *a6
+    delete:
+      description: Elimina definitivamente un menú y su relación con los platillos
+        asociados.
+      operationId: MenuController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del menú
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Menú eliminado exitosamente.
+        "400":
+          description: Identificador con formato incorrecto.
+        "404":
+          description: El menú solicitado no existe.
+      summary: Eliminar un menú
+      tags: *a6
+  /payments:
+    get:
+      description: Devuelve los pagos registrados en la plataforma con soporte de
+        paginación.
+      operationId: PaymentController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Registros a omitir antes de devolver resultados.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Número máximo de pagos a devolver en la página.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Pagos recuperados.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentResponseDto"
+        "400":
+          description: Parámetros de paginación inválidos.
+      summary: Listar pagos
+      tags: &a7
+        - Payments
+    post:
+      description: Crea un nuevo pago asociado a una reservación y usuario.
+      operationId: PaymentController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos requeridos para registrar el pago.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePaymentDto"
+      responses:
+        "201":
+          description: Pago registrado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Registrar pago
+      tags: *a7
+  /payments/{id}:
+    get:
+      description: Recupera el detalle de un pago específico por su identificador.
+      operationId: PaymentController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del pago
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Pago encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentResponseDto"
+        "400":
+          description: El identificador no cumple con el formato requerido.
+        "404":
+          description: No se encontró un pago con el identificador proporcionado.
+      summary: Consultar pago
+      tags: *a7
+    put:
+      description: Modifica los datos permitidos de un pago existente.
+      operationId: PaymentController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del pago
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Campos del pago que se desean ajustar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePaymentDto"
+      responses:
+        "200":
+          description: Pago actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró el pago solicitado.
+      summary: Actualizar pago
+      tags: *a7
+    delete:
+      description: Elimina permanentemente un registro de pago.
+      operationId: PaymentController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del pago
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Pago eliminado.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: El pago solicitado no existe.
+      summary: Eliminar pago
+      tags: *a7
+  /reservations:
+    get:
+      description: Recupera las reservaciones registradas, con soporte de paginación.
+      operationId: ReservationController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Cantidad de elementos a omitir en la paginación.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de reservaciones a devolver.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Reservaciones recuperadas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReservationResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar reservaciones
+      tags: &a8
+        - Reservations
+    post:
+      description: Registra una nueva reservación para un usuario y una mesa específicos.
+      operationId: ReservationController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos necesarios para crear la reservación.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReservationDto"
+      responses:
+        "201":
+          description: Reservación creada exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationResponseDto"
+        "400":
+          description: Los datos proporcionados son inválidos.
+      summary: Crear reservación
+      tags: *a8
+  /reservations/{id}:
+    get:
+      description: Obtiene el detalle de una reservación mediante su identificador.
+      operationId: ReservationController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la reservación
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Reservación encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: La reservación solicitada no existe.
+      summary: Consultar reservación
+      tags: *a8
+    put:
+      description: Actualiza los datos de una reservación existente.
+      operationId: ReservationController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la reservación
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Campos a modificar en la reservación.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReservationDto"
+      responses:
+        "200":
+          description: Reservación actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReservationResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró la reservación a actualizar.
+      summary: Actualizar reservación
+      tags: *a8
+    delete:
+      description: Elimina definitivamente una reservación.
+      operationId: ReservationController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la reservación
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Reservación eliminada correctamente.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: La reservación indicada no existe.
+      summary: Eliminar reservación
+      tags: *a8
+  /restaurants:
+    get:
+      description: Recupera de forma paginada los restaurantes registrados en la plataforma.
+      operationId: RestaurantController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Número de registros a omitir antes de comenzar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de restaurantes a devolver.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Restaurantes recuperados.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RestaurantResponseDto"
+        "400":
+          description: Parámetros de paginación inválidos.
+      summary: Listar restaurantes
+      tags: &a9
+        - Restaurants
+    post:
+      description: Registra un nuevo restaurante en la plataforma.
+      operationId: RestaurantController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos necesarios para registrar el restaurante.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRestaurantDto"
+      responses:
+        "201":
+          description: Restaurante creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantResponseDto"
+        "400":
+          description: Datos de creación inválidos o incompletos.
+      summary: Crear restaurante
+      tags: *a9
+  /restaurants/{id}:
+    get:
+      description: Obtiene el detalle completo de un restaurante específico.
+      operationId: RestaurantController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del restaurante
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Restaurante encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró el restaurante solicitado.
+      summary: Consultar restaurante
+      tags: *a9
+    put:
+      description: Modifica los campos permitidos de un restaurante registrado.
+      operationId: RestaurantController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del restaurante
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Campos que se desean modificar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRestaurantDto"
+      responses:
+        "200":
+          description: Restaurante actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestaurantResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró el restaurante a actualizar.
+      summary: Actualizar restaurante
+      tags: *a9
+    delete:
+      description: Elimina de forma permanente un restaurante de la plataforma.
+      operationId: RestaurantController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del restaurante
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Restaurante eliminado exitosamente.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: El restaurante indicado no existe.
+      summary: Eliminar restaurante
+      tags: *a9
+  /reviews:
+    get:
+      description: Devuelve las reseñas realizadas por usuarios, con paginación opcional.
+      operationId: ReviewController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Cantidad de reseñas a omitir al iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Número máximo de reseñas a devolver en la página.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Reseñas recuperadas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReviewResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar reseñas
+      tags: &a10
+        - Reviews
+    post:
+      description: Registra la opinión de un usuario sobre un restaurante.
+      operationId: ReviewController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos de la reseña a registrar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReviewDto"
+      responses:
+        "201":
+          description: Reseña creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Crear reseña
+      tags: *a10
+  /reviews/{id}:
+    get:
+      description: Obtiene el detalle de una reseña específica.
+      operationId: ReviewController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la reseña
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Reseña encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la reseña solicitada.
+      summary: Consultar reseña
+      tags: *a10
+    put:
+      description: Actualiza los campos permitidos de una reseña existente.
+      operationId: ReviewController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la reseña
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Datos a modificar en la reseña.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReviewDto"
+      responses:
+        "200":
+          description: Reseña actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró la reseña a actualizar.
+      summary: Actualizar reseña
+      tags: *a10
+    delete:
+      description: Elimina permanentemente una reseña registrada.
+      operationId: ReviewController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la reseña
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Reseña eliminada.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la reseña solicitada.
+      summary: Eliminar reseña
+      tags: *a10
+  /sections:
+    get:
+      description: Devuelve las secciones registradas para los restaurantes con
+        paginación opcional.
+      operationId: SectionController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Registros a omitir al iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de secciones a devolver en la página.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Secciones recuperadas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SectionResponseDto"
+        "400":
+          description: Parámetros de consulta inválidos.
+      summary: Listar secciones
+      tags: &a11
+        - Sections
+    post:
+      description: Registra una nueva sección dentro de un restaurante.
+      operationId: SectionController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos de la sección a crear.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSectionDto"
+      responses:
+        "201":
+          description: Sección creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SectionResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Crear sección
+      tags: *a11
+  /sections/{id}:
+    get:
+      description: Recupera el detalle de una sección por su identificador.
+      operationId: SectionController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la sección
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Sección encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SectionResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la sección solicitada.
+      summary: Consultar sección
+      tags: *a11
+    put:
+      description: Modifica los campos permitidos de una sección existente.
+      operationId: SectionController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la sección
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Campos que se desean actualizar en la sección.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSectionDto"
+      responses:
+        "200":
+          description: Sección actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SectionResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró la sección solicitada.
+      summary: Actualizar sección
+      tags: *a11
+    delete:
+      description: Elimina una sección del restaurante.
+      operationId: SectionController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la sección
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Sección eliminada.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: La sección indicada no existe.
+      summary: Eliminar sección
+      tags: *a11
+  /subscription-plans:
+    get:
+      description: Recupera los planes de suscripción disponibles con paginación opcional.
+      operationId: SubscriptionPlanController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Número de registros a omitir antes de iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de planes a devolver.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Planes recuperados.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SubscriptionPlanResponseDto"
+        "400":
+          description: Parámetros de paginación inválidos.
+      summary: Listar planes de suscripción
+      tags: &a12
+        - Subscription Plans
+    post:
+      description: Registra un nuevo plan de suscripción disponible para la plataforma.
+      operationId: SubscriptionPlanController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos del plan a registrar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubscriptionPlanDto"
+      responses:
+        "201":
+          description: Plan creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionPlanResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Crear plan de suscripción
+      tags: *a12
+  /subscription-plans/{id}:
+    get:
+      description: Obtiene el detalle de un plan de suscripción específico.
+      operationId: SubscriptionPlanController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del plan
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Plan encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionPlanResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró el plan solicitado.
+      summary: Consultar plan de suscripción
+      tags: *a12
+    put:
+      description: Modifica los campos permitidos de un plan previamente creado.
+      operationId: SubscriptionPlanController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del plan
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Campos a actualizar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSubscriptionPlanDto"
+      responses:
+        "200":
+          description: Plan actualizado.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionPlanResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró el plan a actualizar.
+      summary: Actualizar plan de suscripción
+      tags: *a12
+    delete:
+      description: Elimina permanentemente un plan de suscripción.
+      operationId: SubscriptionPlanController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único del plan
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Plan eliminado.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: El plan indicado no existe.
+      summary: Eliminar plan de suscripción
+      tags: *a12
+  /tables:
+    get:
+      description: Devuelve las mesas registradas incluyendo su posición en el plano.
+      operationId: TableController_findAll
+      parameters:
+        - name: offset
+          required: false
+          in: query
+          description: Número de registros a omitir antes de iniciar la página.
+          schema:
+            minimum: 0
+            example: 0
+            type: number
+        - name: limit
+          required: false
+          in: query
+          description: Cantidad máxima de mesas a devolver.
+          schema:
+            minimum: 1
+            example: 20
+            type: number
+      responses:
+        "200":
+          description: Mesas recuperadas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TableResponseDto"
+        "400":
+          description: Parámetros de paginación inválidos.
+      summary: Listar mesas
+      tags: &a13
+        - Tables
+    post:
+      description: Registra una nueva mesa en una sección específica.
+      operationId: TableController_create
+      parameters: []
+      requestBody:
+        required: true
+        description: Datos de la mesa a registrar.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTableDto"
+      responses:
+        "201":
+          description: Mesa creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TableResponseDto"
+        "400":
+          description: Datos de creación inválidos.
+      summary: Crear mesa
+      tags: *a13
+  /tables/{id}:
+    get:
+      description: Obtiene el detalle de una mesa en particular.
+      operationId: TableController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la mesa
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "200":
+          description: Mesa encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TableResponseDto"
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la mesa solicitada.
+      summary: Consultar mesa
+      tags: *a13
+    put:
+      description: Modifica los campos permitidos de una mesa existente.
+      operationId: TableController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la mesa
+          schema:
+            format: uuid
+            type: string
+      requestBody:
+        required: true
+        description: Campos a actualizar en la mesa.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTableDto"
+      responses:
+        "200":
+          description: Mesa actualizada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TableResponseDto"
+        "400":
+          description: Datos de actualización inválidos.
+        "404":
+          description: No se encontró la mesa a actualizar.
+      summary: Actualizar mesa
+      tags: *a13
+    delete:
+      description: Elimina una mesa del plano del restaurante.
+      operationId: TableController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Identificador único de la mesa
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Mesa eliminada.
+        "400":
+          description: Identificador con formato inválido.
+        "404":
+          description: No se encontró la mesa indicada.
+      summary: Eliminar mesa
+      tags: *a13
+info:
+  title: Restaurant Platform API
+  description: Colección de endpoints para la gestión integral de restaurantes,
+    incluyendo menús, reservaciones, mesas y suscripciones.
+  version: 1.0.0
+  contact:
+    name: Equipo de Plataforma Restaurantes
+    url: https://example.com
+    email: soporte@example.com
+tags: []
+servers:
+  - url: /
+    description: Servidor local
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: Token JWT emitido por el servicio de autenticación. Inclúyelo en el
+        encabezado Authorization.
+  schemas:
+    SubscriptionResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único de la suscripción
+          format: uuid
+          example: 92a3d8de-ea9f-4e2b-99da-095d29d36347
+        userId:
+          type: string
+          description: Identificador del usuario suscriptor
+          format: uuid
+          example: c90da0d8-5c8c-4a03-8dab-3f6dcb6d58d1
+        restaurantId:
+          type: string
+          description: Identificador del restaurante
+          format: uuid
+          example: 8a029508-6246-42f5-ad02-fde6fcb58a35
+        planId:
+          type: string
+          description: Identificador del plan contratado
+          format: uuid
+          example: 3f2865f3-2ce6-4b35-92c4-03bf0d7b2b92
+        startsOn:
+          type: string
+          description: Fecha de inicio de la suscripción (ISO8601)
+          example: 2025-01-01T00:00:00.000Z
+        endsOn:
+          type: object
+          description: Fecha de término de la suscripción o null si es indefinida
+          example: 2025-12-31T00:00:00.000Z
+          nullable: true
+        status:
+          type: string
+          description: Estado actual de la suscripción
+          enum: &a14
+            - ACTIVE
+            - PAUSED
+            - CANCELLED
+            - EXPIRED
+          example: ACTIVE
+      required:
+        - id
+        - userId
+        - restaurantId
+        - planId
+        - startsOn
+        - status
+    CreateSubscriptionDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Identificador del usuario que contrata la suscripción
+          format: uuid
+          example: c90da0d8-5c8c-4a03-8dab-3f6dcb6d58d1
+        restaurantId:
+          type: string
+          description: Identificador del restaurante suscrito
+          format: uuid
+          example: 8a029508-6246-42f5-ad02-fde6fcb58a35
+        planId:
+          type: string
+          description: Identificador del plan contratado
+          format: uuid
+          example: 3f2865f3-2ce6-4b35-92c4-03bf0d7b2b92
+        startsOn:
+          type: string
+          description: Fecha de inicio de la suscripción (ISO8601)
+          example: 2025-01-01T00:00:00.000Z
+        endsOn:
+          type: object
+          description: Fecha de finalización (ISO8601) o null para renovaciones automáticas
+          example: 2025-12-31T00:00:00.000Z
+          nullable: true
+        status:
+          type: string
+          description: Estado inicial de la suscripción
+          enum: *a14
+          example: ACTIVE
+          nullable: true
+      required:
+        - userId
+        - restaurantId
+        - planId
+        - startsOn
+    UpdateSubscriptionDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Identificador del usuario suscriptor
+          format: uuid
+          example: c90da0d8-5c8c-4a03-8dab-3f6dcb6d58d1
+        restaurantId:
+          type: string
+          description: Identificador del restaurante asociado
+          format: uuid
+          example: 8a029508-6246-42f5-ad02-fde6fcb58a35
+        planId:
+          type: string
+          description: Identificador del plan contratado
+          format: uuid
+          example: 3f2865f3-2ce6-4b35-92c4-03bf0d7b2b92
+        startsOn:
+          type: string
+          description: Fecha de inicio de la suscripción (ISO8601)
+          example: 2025-01-01T00:00:00.000Z
+        endsOn:
+          type: object
+          description: Fecha de término o null para suscripción continua
+          example: 2025-12-31T00:00:00.000Z
+          nullable: true
+        status:
+          type: string
+          description: Estado actual de la suscripción
+          enum: *a14
+          example: PAUSED
+    UserResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único del usuario
+          format: uuid
+          example: 5f875760-6f0d-4d54-bd5a-7c2c9bb4e6fd
+        email:
+          type: string
+          description: Correo electrónico del usuario
+          format: email
+          example: ana.garcia@example.com
+        names:
+          type: string
+          description: Nombre(s) del usuario
+          example: Ana Garcia
+        phone:
+          type: string
+          description: Número telefónico de contacto
+          example: +52 55 1234 5678
+      required:
+        - id
+        - email
+        - names
+        - phone
+    CreateUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Correo electrónico único del usuario
+          format: email
+          maxLength: 100
+          example: ana.garcia@example.com
+        names:
+          type: string
+          description: Nombre(s) completos del usuario
+          maxLength: 100
+          example: Ana Maria Garcia
+        phone:
+          type: string
+          description: Número de teléfono de contacto
+          maxLength: 15
+          example: +52 55 1234 5678
+      required:
+        - email
+        - names
+        - phone
+    UpdateUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Correo electrónico del usuario
+          format: email
+          maxLength: 100
+          example: ana.garcia@example.com
+        names:
+          type: string
+          description: Nombre(s) actualizados del usuario
+          maxLength: 100
+          example: Ana Garcia
+        phone:
+          type: string
+          description: Número de teléfono de contacto
+          maxLength: 15
+          example: +52 55 9876 5432
+    DishResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único del platillo
+          format: uuid
+          example: aab7aa4a-1415-4324-8fb5-c5726f526c6e
+        restaurantId:
+          type: string
+          description: Identificador del restaurante al que pertenece
+          format: uuid
+          example: 0cf715d5-8c21-4a20-8ec1-170206a81d73
+        menuId:
+          type: string
+          description: Identificador del menú contenedor
+          format: uuid
+          example: 6b766096-74fb-41fa-8fdb-98788932aa2a
+        name:
+          type: string
+          description: Nombre público del platillo
+          example: Hamburguesa gourmet de cordero
+        description:
+          type: string
+          description: Descripción detallada del platillo
+          example: Carne de cordero orgánico con queso de cabra y mermelada de higos.
+          nullable: true
+        price:
+          type: number
+          description: Precio actual del platillo
+          example: 189.99
+        imageId:
+          type: object
+          description: Identificador de la imagen asociada
+          format: uuid
+          nullable: true
+          example: 22f279db-9479-4fcb-8db6-4f2569a68a57
+        imageUrl:
+          type: object
+          description: URL pública de la imagen asociada
+          nullable: true
+          example: https://cdn.restaurants.example/dishes/22f279db.jpg
+      required:
+        - id
+        - restaurantId
+        - menuId
+        - name
+        - price
+    CreateDishDto:
+      type: object
+      properties:
+        restaurantId:
+          type: string
+          description: Identificador del restaurante al que pertenece el platillo
+          format: uuid
+          example: eb4ebdf2-5e56-4df6-8b0b-6f4b456bfb3d
+        menuId:
+          type: string
+          description: Identificador del menú que agrupa el platillo
+          format: uuid
+          example: 2b2b6a0a-9f46-4bf9-8d59-1cb9a4ba5787
+        name:
+          type: string
+          description: Nombre comercial del platillo
+          maxLength: 150
+          example: Tacos de camarón al pastor
+        description:
+          type: string
+          description: Descripción breve del platillo, ingredientes o notas del chef
+          maxLength: 500
+          example: Tortilla de maíz azul rellena de camarones marinados con piña y chile
+            ancho.
+          nullable: true
+        price:
+          type: number
+          description: Precio unitario del platillo en la moneda configurada
+          minimum: 0
+          example: 145.5
+        imageId:
+          type: string
+          description: Identificador de la imagen destacada del platillo
+          format: uuid
+          nullable: true
+          example: 67f2d9b0-1969-4afc-9b3e-8f743c881b5e
+      required:
+        - restaurantId
+        - menuId
+        - name
+        - price
+    UpdateDishDto:
+      type: object
+      properties:
+        restaurantId:
+          type: string
+          description: Nuevo restaurante propietario del platillo
+          format: uuid
+          example: 28a65553-202f-4c8e-89fc-40935d6b7d6b
+        menuId:
+          type: string
+          description: Nuevo menú asignado al platillo
+          format: uuid
+          example: 5e5a947e-44eb-4f74-a97f-d59d42cbecb3
+        name:
+          type: string
+          description: Nombre actualizado del platillo
+          maxLength: 150
+          example: Tacos de camarón encacahuatados
+        description:
+          type: string
+          description: Descripción actualizada del platillo
+          maxLength: 500
+          example: Receta revisada con cacahuate tostado y reducción de naranja.
+          nullable: true
+        price:
+          type: number
+          description: Precio actualizado del platillo
+          minimum: 0
+          example: 159.9
+        imageId:
+          type: string
+          description: Identificador de la imagen a asociar
+          format: uuid
+          nullable: true
+          example: a67427d9-491d-4b16-9202-0df33bb1a3a0
+    ImageResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único de la imagen
+          format: uuid
+          example: 2880f5d5-1e6b-4ef4-a2f0-633d8bb53d45
+        url:
+          type: string
+          description: URL accesible de la imagen
+          example: https://cdn.restaurants.example/images/sala-principal.jpg
+        title:
+          type: string
+          description: Título descriptivo de la imagen
+          example: Sala principal
+          nullable: true
+        description:
+          type: string
+          description: Descripción adicional de la imagen
+          example: Vista general de la sala principal del restaurante.
+          nullable: true
+        createdAt:
+          type: string
+          description: Fecha de creación en formato ISO8601
+          example: 2025-01-12T09:30:00.000Z
+        isActive:
+          type: boolean
+          description: Indica si la imagen está disponible para uso público
+          example: true
+      required:
+        - id
+        - url
+        - createdAt
+        - isActive
+    CreateImageDto:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL accesible públicamente de la imagen
+          maxLength: 255
+          example: https://cdn.restaurants.example/images/sala-principal.jpg
+        title:
+          type: string
+          description: Título corto que describe la imagen
+          maxLength: 100
+          example: Sala principal
+          nullable: true
+        description:
+          type: string
+          description: Texto descriptivo adicional
+          maxLength: 255
+          example: Vista panorámica de la sala principal del restaurante.
+          nullable: true
+        createdAt:
+          type: string
+          description: Fecha de creación de la imagen en formato ISO8601
+          example: 2025-01-12T09:30:00.000Z
+          nullable: true
+        isActive:
+          type: boolean
+          description: Bandera que indica si la imagen está activa
+          example: true
+          nullable: true
+      required:
+        - url
+    UpdateImageDto:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Nueva URL accesible de la imagen
+          maxLength: 255
+          example: https://cdn.restaurants.example/images/sala-principal-v2.png
+        title:
+          type: string
+          description: Título corto actualizado
+          maxLength: 100
+          example: Sala principal renovada
+        description:
+          type: string
+          description: Descripción actualizada de la imagen
+          maxLength: 255
+          example: Nuevo decorado de la sala principal tras remodelación.
+          nullable: true
+        createdAt:
+          type: string
+          description: Fecha de captura o creación en formato ISO8601
+          example: 2025-04-02T18:45:00.000Z
+        isActive:
+          type: boolean
+          description: Bandera de disponibilidad de la imagen
+          example: false
+    LayoutObjectResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único del objeto de layout
+          format: uuid
+          example: c0c44c0f-f34a-4a56-9c77-3d9acbb8585b
+        name:
+          type: string
+          description: Nombre o etiqueta del objeto en el plano
+          example: Mesa 12
+          nullable: true
+        type:
+          type: string
+          description: Tipo de objeto (mesa, barra, decoración, etc.)
+          example: table
+          nullable: true
+        positionX:
+          type: number
+          description: Posición horizontal del objeto
+          example: 120
+        positionY:
+          type: number
+          description: Posición vertical del objeto
+          example: 220
+        width:
+          type: number
+          description: Ancho del objeto en el plano
+          example: 80
+        height:
+          type: number
+          description: Alto del objeto en el plano
+          example: 80
+        imageId:
+          type: object
+          description: Identificador de la imagen asociada
+          format: uuid
+          nullable: true
+          example: c30be437-9d1a-4c7e-82e9-f9c7fd54eef8
+        imageUrl:
+          type: object
+          description: URL de la imagen asociada
+          nullable: true
+          example: https://cdn.restaurants.example/layout-elements/mesa-12.png
+        sectionIds:
+          description: Identificadores de secciones vinculadas al objeto
+          example:
+            - 08c7032b-cc9a-4fb7-8c75-0a3b9e2ff4ba
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - positionX
+        - positionY
+        - width
+        - height
+        - sectionIds
+    CreateLayoutObjectDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre o alias del objeto dentro del plano
+          maxLength: 100
+          example: Mesa 12
+          nullable: true
+        type:
+          type: string
+          description: Tipo de objeto representado en el plano (mesa, barra, decoración,
+            etc.)
+          maxLength: 50
+          example: table
+          nullable: true
+        positionX:
+          type: number
+          description: Posición horizontal del objeto en el lienzo
+          example: 120
+          minimum: 0
+        positionY:
+          type: number
+          description: Posición vertical del objeto en el lienzo
+          example: 240
+          minimum: 0
+        width:
+          type: number
+          description: Ancho del objeto en unidades del plano
+          example: 80
+          minimum: 1
+        height:
+          type: number
+          description: Alto del objeto en unidades del plano
+          example: 80
+          minimum: 1
+        imageId:
+          type: string
+          description: Identificador de la imagen asociada al objeto
+          format: uuid
+          example: b5c2f71f-8ca9-4cf4-87a4-2fb7d6e4ca01
+          nullable: true
+      required:
+        - positionX
+        - positionY
+        - width
+        - height
+    UpdateLayoutObjectDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nuevo nombre o alias del objeto
+          maxLength: 100
+          example: Barra norte
+        type:
+          type: string
+          description: Tipo actualizado del objeto en el plano
+          maxLength: 50
+          example: bar
+        positionX:
+          type: number
+          description: Nueva coordenada horizontal del objeto
+          example: 140
+        positionY:
+          type: number
+          description: Nueva coordenada vertical del objeto
+          example: 260
+        width:
+          type: number
+          description: Nuevo ancho del objeto
+          minimum: 1
+          example: 90
+        height:
+          type: number
+          description: Nueva altura del objeto
+          minimum: 1
+          example: 90
+        imageId:
+          type: string
+          description: Identificador de la imagen asociada
+          format: uuid
+          example: cf5e3d00-4b88-4f9f-9ef2-6ac6c5d61bb1
+    MenuResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único del menú
+          format: uuid
+          example: 9ffb0c2b-1d01-4465-8aa4-3f52f4df09fb
+        restaurantId:
+          type: string
+          description: Identificador del restaurante que ofrece el menú
+          format: uuid
+          example: 7ef81fa4-0c6f-48aa-9d2a-2a88a12df855
+        name:
+          type: string
+          description: Nombre del menú mostrado a los comensales
+          example: Menú degustación de mariscos
+        description:
+          type: string
+          description: Descripción comercial del menú
+          example: Incluye entrada, plato fuerte y postre con maridaje sugerido.
+          nullable: true
+        price:
+          type: number
+          description: Precio promedio sugerido del menú
+          nullable: true
+          example: 520
+        coverImageUrl:
+          type: object
+          description: URL de la imagen de portada del menú
+          nullable: true
+          example: https://cdn.restaurants.example/menus/degustacion.jpg
+        dishIds:
+          description: Listado de identificadores de los platillos asociados
+          example:
+            - c47331a3-2d10-493e-9a7f-29433536b54c
+            - 8f80de5c-1f1d-4064-9cf5-32a9ad55d5f7
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - restaurantId
+        - name
+        - dishIds
+    CreateMenuDto:
+      type: object
+      properties:
+        restaurantId:
+          type: string
+          description: Identificador del restaurante propietario del menú
+          format: uuid
+          example: fb1f6164-0ddc-4cea-8fc0-02e3d632144b
+        name:
+          type: string
+          description: Nombre comercial del menú
+          maxLength: 150
+          example: Menú de temporada otoño-invierno
+        description:
+          type: string
+          description: Descripción o mensaje principal del menú
+          maxLength: 500
+          example: Selección de platillos inspirados en productos locales de temporada.
+          nullable: true
+        price:
+          type: number
+          description: Precio promedio del menú para referencias rápidas
+          minimum: 0
+          example: 399.99
+        coverImageUrl:
+          type: string
+          description: URL de la imagen de portada del menú
+          maxLength: 255
+          nullable: true
+          example: https://cdn.restaurants.example/menus/season-cover.jpg
+      required:
+        - restaurantId
+        - name
+    UpdateMenuDto:
+      type: object
+      properties:
+        restaurantId:
+          type: string
+          description: Identificador del nuevo restaurante propietario
+          format: uuid
+          example: a36b631a-0dfe-4c96-9c66-f05965e76a7a
+        name:
+          type: string
+          description: Nombre actualizado del menú
+          maxLength: 150
+          example: Menú degustación edición limitada
+        description:
+          type: string
+          description: Descripción actualizada del menú
+          maxLength: 500
+          example: Incluye maridaje de vinos orgánicos y postres artesanales.
+          nullable: true
+        price:
+          type: number
+          description: Precio estimado actualizado
+          minimum: 0
+          example: 420
+        coverImageUrl:
+          type: string
+          description: URL de la nueva imagen de portada
+          maxLength: 255
+          nullable: true
+          example: https://cdn.restaurants.example/menus/new-cover.png
+    PaymentResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único del pago
+          format: uuid
+          example: 5b7cb1ef-6d3d-4a9f-8dd1-8fb35be1e3de
+        reservationId:
+          type: string
+          description: Identificador de la reservación pagada
+          format: uuid
+          example: 3e4a32bc-70d4-4ef0-93c4-9be9a5775d6c
+        userId:
+          type: string
+          description: Identificador del usuario que realizó el pago
+          format: uuid
+          example: 8849224a-bd89-4c83-954c-c38c8174d879
+        amount:
+          type: number
+          description: Monto liquidado
+          example: 850.75
+        currency:
+          type: string
+          description: Moneda del pago (ISO 4217)
+          example: MXN
+        method:
+          type: string
+          description: Método utilizado
+          enum: &a15
+            - CASH
+            - CARD
+            - TRANSFER
+            - ONLINE
+          example: CARD
+        status:
+          type: string
+          description: Estado actual del pago
+          enum: &a16
+            - PENDING
+            - PAID
+            - FAILED
+            - REFUNDED
+          example: PAID
+        paidAt:
+          type: string
+          description: Fecha y hora de liquidación (ISO8601)
+          example: 2025-05-18T17:25:43.511Z
+        reference:
+          type: string
+          description: Referencia de pago registrada
+          maxLength: 100
+          example: TICKET-982734
+          nullable: true
+        notes:
+          type: string
+          description: Notas adicionales sobre el pago
+          nullable: true
+          example: Pagado en terminal presencial con código de descuento.
+      required:
+        - id
+        - reservationId
+        - userId
+        - amount
+        - currency
+        - method
+        - status
+        - paidAt
+    CreatePaymentDto:
+      type: object
+      properties:
+        reservationId:
+          type: string
+          description: Identificador de la reservación asociada al pago
+          format: uuid
+          example: 3e4a32bc-70d4-4ef0-93c4-9be9a5775d6c
+        userId:
+          type: string
+          description: Identificador del usuario que realiza el pago
+          format: uuid
+          example: 8849224a-bd89-4c83-954c-c38c8174d879
+        amount:
+          type: number
+          description: Monto total pagado expresado en la moneda indicada
+          minimum: 0
+          example: 850.75
+        currency:
+          type: string
+          description: Moneda del pago utilizando código ISO 4217
+          example: MXN
+        method:
+          type: string
+          description: Método de pago utilizado
+          enum: *a15
+          example: CARD
+        status:
+          type: string
+          description: Estado actual del pago
+          enum: *a16
+          example: PAID
+        paidAt:
+          type: string
+          description: Fecha y hora en la que se realizó el pago (ISO8601)
+          example: 2025-05-18T17:25:43.511Z
+        reference:
+          type: string
+          description: Referencia externa o número de comprobante
+          maxLength: 100
+          example: TICKET-982734
+          nullable: true
+        notes:
+          type: string
+          description: Notas adicionales relacionadas con el pago
+          maxLength: 500
+          example: Pago completado en caja principal con promoción de cliente frecuente.
+          nullable: true
+      required:
+        - reservationId
+        - userId
+        - amount
+        - currency
+        - method
+        - status
+        - paidAt
+    UpdatePaymentDto:
+      type: object
+      properties:
+        reservationId:
+          type: string
+          description: Identificador de la reservación asociada al pago
+          format: uuid
+          example: 3e4a32bc-70d4-4ef0-93c4-9be9a5775d6c
+        userId:
+          type: string
+          description: Identificador del usuario pagador
+          format: uuid
+          example: 8849224a-bd89-4c83-954c-c38c8174d879
+        amount:
+          type: number
+          description: Monto pagado
+          minimum: 0
+          example: 850.75
+        currency:
+          type: string
+          description: Moneda del pago en formato ISO 4217
+          example: USD
+        method:
+          type: string
+          description: Método de pago utilizado
+          enum: *a15
+          example: TRANSFER
+        status:
+          type: string
+          description: Estado del pago
+          enum: *a16
+          example: REFUNDED
+        paidAt:
+          type: string
+          description: Fecha del pago en formato ISO8601
+          example: 2025-05-18T17:25:43.511Z
+        reference:
+          type: string
+          description: Referencia externa o folio del pago
+          maxLength: 100
+          example: TICKET-982734
+        notes:
+          type: string
+          description: Notas relacionadas con el pago
+          maxLength: 500
+          example: Reembolso parcial por cancelación anticipada.
+    ReservationResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único de la reserva
+          format: uuid
+          example: 52f61f3d-9f47-46f5-84a7-4cc39556b0d4
+        userId:
+          type: string
+          description: Identificador del usuario que realizó la reserva
+          format: uuid
+          example: 40e9964a-0f46-4c0f-92a6-e21a6a2ec10b
+        restaurantId:
+          type: string
+          description: Identificador del restaurante
+          format: uuid
+          example: d2f63148-c7c4-485d-a26d-fb6da231f80c
+        tableId:
+          type: string
+          description: Identificador de la mesa asignada
+          format: uuid
+          example: 6e93ba19-fa2a-4f76-bd3c-7b396f9a5d7b
+        reservationDate:
+          type: string
+          description: Fecha de la reserva en formato ISO8601
+          example: 2025-09-12T00:00:00.000Z
+        reservationTime:
+          type: string
+          description: Hora de la reserva en formato HH:mm
+          example: 20:30
+        guestCount:
+          type: number
+          description: Número de comensales
+          example: 4
+        status:
+          type: string
+          description: Estado actual de la reserva
+          enum: &a17
+            - PENDING
+            - CONFIRMED
+            - CANCELLED
+            - COMPLETED
+          example: CONFIRMED
+        notes:
+          type: string
+          description: Notas adicionales para el servicio
+          nullable: true
+          example: Llegarán 10 minutos antes para decorar la mesa.
+      required:
+        - id
+        - userId
+        - restaurantId
+        - tableId
+        - reservationDate
+        - reservationTime
+        - guestCount
+        - status
+    CreateReservationDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Identificador del usuario que realiza la reserva
+          format: uuid
+          example: 40e9964a-0f46-4c0f-92a6-e21a6a2ec10b
+        restaurantId:
+          type: string
+          description: Identificador del restaurante donde se realizará la reserva
+          format: uuid
+          example: d2f63148-c7c4-485d-a26d-fb6da231f80c
+        tableId:
+          type: string
+          description: Identificador de la mesa asignada
+          format: uuid
+          example: 6e93ba19-fa2a-4f76-bd3c-7b396f9a5d7b
+        reservationDate:
+          type: string
+          description: Fecha de la reserva en formato ISO8601
+          example: 2025-09-12T00:00:00.000Z
+        reservationTime:
+          type: string
+          description: Hora de la reserva en formato HH:mm (24h)
+          example: 20:30
+          pattern: ^\d{2}:\d{2}$
+        guestCount:
+          type: number
+          description: Número de comensales incluidos en la reserva
+          minimum: 1
+          example: 4
+        status:
+          type: string
+          description: Estado inicial de la reserva
+          enum: *a17
+          example: PENDING
+          nullable: true
+        notes:
+          type: string
+          description: Notas adicionales para el staff
+          maxLength: 500
+          example: Celebración de aniversario, requiere decoración especial.
+          nullable: true
+      required:
+        - userId
+        - restaurantId
+        - tableId
+        - reservationDate
+        - reservationTime
+        - guestCount
+    UpdateReservationDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Identificador del usuario asignado a la reserva
+          format: uuid
+          example: 40e9964a-0f46-4c0f-92a6-e21a6a2ec10b
+        restaurantId:
+          type: string
+          description: Identificador del restaurante de la reserva
+          format: uuid
+          example: d2f63148-c7c4-485d-a26d-fb6da231f80c
+        tableId:
+          type: string
+          description: Identificador de la mesa asignada
+          format: uuid
+          example: 6e93ba19-fa2a-4f76-bd3c-7b396f9a5d7b
+        reservationDate:
+          type: string
+          description: Fecha de la reserva (ISO8601)
+          example: 2025-09-12T00:00:00.000Z
+        reservationTime:
+          type: string
+          description: Hora de la reserva en formato HH:mm
+          example: 21:00
+          pattern: ^\d{2}:\d{2}$
+        guestCount:
+          type: number
+          description: Número de comensales
+          minimum: 1
+          example: 6
+        status:
+          type: string
+          description: Estado actualizado de la reserva
+          enum: *a17
+          example: CONFIRMED
+        notes:
+          type: string
+          description: Notas adicionales para el servicio
+          maxLength: 500
+          example: Confirmaron asistencia de 6 personas.
+    RestaurantResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único del restaurante
+          format: uuid
+          example: 9b8aae3c-6d2d-4c01-b82c-b87bcae40558
+        name:
+          type: string
+          description: Nombre comercial del restaurante
+          example: La Terraza del Chef
+        description:
+          type: string
+          description: Descripción general del restaurante
+          nullable: true
+          example: Experiencia gastronómica de autor con ingredientes de temporada.
+        address:
+          type: string
+          description: Dirección física del restaurante
+          example: Av. Reforma 123, Ciudad de México, MX
+        openingHours:
+          type: string
+          description: Horario de operación
+          nullable: true
+          example: Lunes a sábado de 13:00 a 23:00
+        capacity:
+          type: number
+          description: Capacidad máxima de comensales
+          example: 120
+        imageId:
+          type: object
+          description: Identificador de la imagen destacada
+          format: uuid
+          nullable: true
+          example: a3b1e88a-2946-4bfb-8c9d-b727ecbc8615
+        imageUrl:
+          type: object
+          description: URL de la imagen destacada
+          nullable: true
+          example: https://cdn.restaurants.example/restaurants/la-terraza.jpg
+      required:
+        - id
+        - name
+        - address
+        - capacity
+    CreateRestaurantDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre comercial del restaurante
+          maxLength: 150
+          example: La Terraza del Chef
+        description:
+          type: string
+          description: Descripción general del concepto gastronómico
+          maxLength: 500
+          example: Experiencia gastronómica de autor con ingredientes de temporada.
+          nullable: true
+        address:
+          type: string
+          description: Dirección física del restaurante
+          maxLength: 255
+          example: Av. Reforma 123, Ciudad de México, MX
+        openingHours:
+          type: string
+          description: Horario de operación en formato libre
+          maxLength: 120
+          example: Lunes a sábado de 13:00 a 23:00
+          nullable: true
+        capacity:
+          type: number
+          description: Capacidad máxima de comensales
+          minimum: 1
+          example: 120
+        imageId:
+          type: string
+          description: Identificador de la imagen destacada del restaurante
+          format: uuid
+          example: a3b1e88a-2946-4bfb-8c9d-b727ecbc8615
+          nullable: true
+      required:
+        - name
+        - address
+        - capacity
+    UpdateRestaurantDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre actualizado del restaurante
+          maxLength: 150
+          example: Terraza 360
+        description:
+          type: string
+          description: Descripción actualizada del restaurante
+          maxLength: 500
+          example: Nueva propuesta de cocina de autor enfocada en productos orgánicos.
+          nullable: true
+        address:
+          type: string
+          description: Dirección actualizada
+          maxLength: 255
+          example: Calle Independencia 45, Guadalajara, MX
+        openingHours:
+          type: string
+          description: Horario de operación actualizado
+          maxLength: 120
+          example: Martes a domingo de 14:00 a 23:30
+          nullable: true
+        capacity:
+          type: number
+          description: Nueva capacidad máxima de comensales
+          minimum: 1
+          example: 140
+        imageId:
+          type: string
+          description: Identificador de la imagen asociada
+          format: uuid
+          example: b9220f60-30e1-4b82-9e89-30eaacb57910
+    ReviewResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único de la reseña
+          format: uuid
+          example: f5b8df5c-6998-4d2c-b781-21b3e6d2e3b3
+        userId:
+          type: string
+          description: Identificador del usuario autor de la reseña
+          format: uuid
+          example: 2f5e357b-9a09-47ae-a548-452ca9d2b6c5
+        restaurantId:
+          type: string
+          description: Identificador del restaurante evaluado
+          format: uuid
+          example: dc0b6fd5-3c61-4f46-a513-5514b3f43a3f
+        rating:
+          type: number
+          description: Calificación otorgada (1 a 5)
+          example: 4
+        comment:
+          type: string
+          description: Comentario escrito por el cliente
+          nullable: true
+          example: Gran experiencia y atención de calidad.
+        createdAt:
+          type: string
+          description: Fecha de creación de la reseña (ISO8601)
+          example: 2025-03-10T18:20:00.000Z
+      required:
+        - id
+        - userId
+        - restaurantId
+        - rating
+        - createdAt
+    CreateReviewDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Identificador del usuario que emite la reseña
+          format: uuid
+          example: 2f5e357b-9a09-47ae-a548-452ca9d2b6c5
+        restaurantId:
+          type: string
+          description: Identificador del restaurante reseñado
+          format: uuid
+          example: dc0b6fd5-3c61-4f46-a513-5514b3f43a3f
+        rating:
+          type: number
+          description: Calificación otorgada al restaurante (1 a 5)
+          minimum: 1
+          maximum: 5
+          example: 4
+        comment:
+          type: string
+          description: Comentario adicional del cliente
+          maxLength: 1000
+          example: Servicio excelente y platillos con gran sabor.
+          nullable: true
+        createdAt:
+          type: string
+          description: Fecha de creación de la reseña (ISO8601)
+          example: 2025-03-10T18:20:00.000Z
+          nullable: true
+      required:
+        - userId
+        - restaurantId
+        - rating
+    UpdateReviewDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Identificador del usuario autor de la reseña
+          format: uuid
+          example: 2f5e357b-9a09-47ae-a548-452ca9d2b6c5
+        restaurantId:
+          type: string
+          description: Identificador del restaurante reseñado
+          format: uuid
+          example: dc0b6fd5-3c61-4f46-a513-5514b3f43a3f
+        rating:
+          type: number
+          description: Calificación actualizada (1 a 5)
+          minimum: 1
+          maximum: 5
+          example: 5
+        comment:
+          type: string
+          description: Comentario actualizado del cliente
+          maxLength: 1000
+          example: Súper atentos y comida memorable.
+        createdAt:
+          type: string
+          description: Fecha de creación/actualización (ISO8601)
+          example: 2025-03-11T12:45:00.000Z
+    SectionResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único de la sección
+          format: uuid
+          example: a9eb513e-884c-48b7-9fa0-0b57776578b5
+        restaurantId:
+          type: string
+          description: Identificador del restaurante al que pertenece la sección
+          format: uuid
+          example: 1d079614-6712-4f98-9a8b-f50506f8a59f
+        name:
+          type: string
+          description: Nombre de la sección
+          example: Terraza VIP
+        description:
+          type: string
+          description: Descripción de la sección
+          nullable: true
+          example: Espacio al aire libre con vista panorámica.
+      required:
+        - id
+        - restaurantId
+        - name
+    CreateSectionDto:
+      type: object
+      properties:
+        restaurantId:
+          type: string
+          description: Identificador del restaurante al que pertenece la sección
+          format: uuid
+          example: 1d079614-6712-4f98-9a8b-f50506f8a59f
+        name:
+          type: string
+          description: Nombre comercial de la sección
+          maxLength: 120
+          example: Terraza VIP
+        description:
+          type: string
+          description: Descripción breve de la sección
+          maxLength: 500
+          example: Espacio al aire libre con vista panorámica.
+          nullable: true
+      required:
+        - restaurantId
+        - name
+    UpdateSectionDto:
+      type: object
+      properties:
+        restaurantId:
+          type: string
+          description: Identificador del restaurante de la sección
+          format: uuid
+          example: 1d079614-6712-4f98-9a8b-f50506f8a59f
+        name:
+          type: string
+          description: Nombre actualizado de la sección
+          maxLength: 120
+          example: Terraza premium
+        description:
+          type: string
+          description: Descripción actualizada de la sección
+          maxLength: 500
+          example: Espacio renovado con mobiliario premium.
+    SubscriptionPlanResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único del plan
+          format: uuid
+          example: e9b5587a-5a4a-4cb9-b9f8-87df5fbd1f08
+        name:
+          type: string
+          description: Nombre comercial del plan
+          example: Plan Profesional
+        tier:
+          type: string
+          description: Nivel o tier del plan
+          enum: &a18
+            - BASIC
+            - PREMIUM
+            - ENTERPRISE
+          example: PREMIUM
+        price:
+          type: number
+          description: Precio del plan
+          example: 1499
+        billingCycle:
+          type: string
+          description: Frecuencia de cobro del plan
+          enum: &a19
+            - MONTHLY
+            - YEARLY
+          example: MONTHLY
+        status:
+          type: string
+          description: Estado actual del plan
+          enum: &a20
+            - ACTIVE
+            - INACTIVE
+          example: ACTIVE
+      required:
+        - id
+        - name
+        - tier
+        - price
+        - billingCycle
+        - status
+    CreateSubscriptionPlanDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre comercial del plan de suscripción
+          maxLength: 120
+          example: Plan Profesional
+        tier:
+          type: string
+          description: Nivel o categoría del plan
+          enum: *a18
+          example: PREMIUM
+        price:
+          type: number
+          description: Precio unitario del plan en la moneda configurada
+          minimum: 0
+          example: 1499
+        billingCycle:
+          type: string
+          description: Frecuencia de cobro del plan
+          enum: *a19
+          example: MONTHLY
+        status:
+          type: string
+          description: Estado actual del plan
+          enum: *a20
+          example: ACTIVE
+      required:
+        - name
+        - tier
+        - price
+        - billingCycle
+        - status
+    UpdateSubscriptionPlanDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre del plan
+          maxLength: 120
+          example: Plan Profesional Plus
+        tier:
+          type: string
+          description: Nivel del plan
+          enum: *a18
+          example: ENTERPRISE
+        price:
+          type: number
+          description: Precio actualizado del plan
+          minimum: 0
+          example: 1799
+        billingCycle:
+          type: string
+          description: Frecuencia de cobro
+          enum: *a19
+          example: ANNUAL
+        status:
+          type: string
+          description: Estado del plan
+          enum: *a20
+          example: INACTIVE
+    TableResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identificador único de la mesa
+          format: uuid
+          example: f83e4e44-7f87-4f1a-abc2-8ed2c9bcf33b
+        sectionId:
+          type: string
+          description: Identificador de la sección a la que pertenece la mesa
+          format: uuid
+          example: 4bc0ab9a-4a86-4d95-9182-c83b20a0cf7a
+        restaurantId:
+          type: string
+          description: Identificador del restaurante de la mesa
+          format: uuid
+          example: c30fa171-1a1f-4a66-98f4-8f5d0f3f3f38
+        tableNumber:
+          type: number
+          description: Número asignado a la mesa dentro de la sección
+          example: 12
+        capacity:
+          type: number
+          description: Capacidad de comensales que soporta la mesa
+          example: 4
+        positionX:
+          type: number
+          description: Coordenada horizontal de la mesa
+          example: 320
+        positionY:
+          type: number
+          description: Coordenada vertical de la mesa
+          example: 180
+        width:
+          type: number
+          description: Ancho de la mesa en el plano
+          example: 90
+        height:
+          type: number
+          description: Alto de la mesa en el plano
+          example: 90
+        imageId:
+          type: object
+          description: Identificador de la imagen asociada
+          format: uuid
+          nullable: true
+          example: 32a8f4eb-0a6d-4e2f-9a0b-467d145a0c7d
+        imageUrl:
+          type: object
+          description: URL de la imagen asociada
+          nullable: true
+          example: https://cdn.restaurants.example/tables/mesa-12.png
+      required:
+        - id
+        - sectionId
+        - restaurantId
+        - tableNumber
+        - capacity
+        - positionX
+        - positionY
+        - width
+        - height
+    CreateTableDto:
+      type: object
+      properties:
+        sectionId:
+          type: string
+          description: Identificador de la sección a la que pertenece la mesa
+          format: uuid
+          example: 4bc0ab9a-4a86-4d95-9182-c83b20a0cf7a
+        tableNumber:
+          type: number
+          description: Número asignado a la mesa dentro de la sección
+          minimum: 1
+          example: 12
+        capacity:
+          type: number
+          description: Capacidad máxima de comensales en la mesa
+          minimum: 1
+          example: 4
+        positionX:
+          type: number
+          description: Coordenada horizontal de la mesa en el plano
+          example: 320
+        positionY:
+          type: number
+          description: Coordenada vertical de la mesa en el plano
+          example: 180
+        width:
+          type: number
+          description: Ancho de la mesa en el plano
+          minimum: 1
+          example: 90
+        height:
+          type: number
+          description: Alto de la mesa en el plano
+          minimum: 1
+          example: 90
+        imageId:
+          type: string
+          description: Identificador de la imagen asociada a la mesa
+          format: uuid
+          example: 32a8f4eb-0a6d-4e2f-9a0b-467d145a0c7d
+          nullable: true
+      required:
+        - sectionId
+        - tableNumber
+        - capacity
+        - positionX
+        - positionY
+        - width
+        - height
+    UpdateTableDto:
+      type: object
+      properties:
+        sectionId:
+          type: string
+          description: Identificador de la sección a la que se moverá la mesa
+          format: uuid
+          example: 4bc0ab9a-4a86-4d95-9182-c83b20a0cf7a
+        tableNumber:
+          type: number
+          description: Número de mesa actualizado
+          minimum: 1
+          example: 15
+        capacity:
+          type: number
+          description: Capacidad actualizada de la mesa
+          minimum: 1
+          example: 6
+        positionX:
+          type: number
+          description: Nueva coordenada horizontal
+          example: 350
+        positionY:
+          type: number
+          description: Nueva coordenada vertical
+          example: 210
+        width:
+          type: number
+          description: Nuevo ancho del elemento
+          minimum: 1
+          example: 110
+        height:
+          type: number
+          description: Nueva altura del elemento
+          minimum: 1
+          example: 110
+        imageId:
+          type: string
+          description: Identificador de la imagen asociada
+          format: uuid
+          example: 32a8f4eb-0a6d-4e2f-9a0b-467d145a0c7d

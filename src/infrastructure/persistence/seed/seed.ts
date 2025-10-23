@@ -14,34 +14,7 @@ import {
   TypeOrmReviewRepository,
   TypeOrmSubscriptionRepository,
 } from '../repositories/index.js';
-
-import {
-  seedUsers,
-  seedSubscriptionPlans,
-  seedImages,
-  seedRestaurants,
-  seedSections,
-  seedTables,
-  seedMenus,
-  seedDishes,
-  seedReservations,
-  seedPayments,
-  seedReviews,
-  seedSubscriptions,
-} from './seeders/index.js';
-
-import { usersSeedData } from './data/users.seed.js';
-import { subscriptionPlansSeedData } from './data/subscription-plans.seed.js';
-import { imagesSeedData } from './data/images.seed.js';
-import { restaurantsSeedData } from './data/restaurants.seed.js';
-import { sectionsSeedData } from './data/sections.seed.js';
-import { tablesSeedData } from './data/tables.seed.js';
-import { menusSeedData } from './data/menus.seed.js';
-import { dishesSeedData } from './data/dishes.seed.js';
-import { reservationsSeedData } from './data/reservations.seed.js';
-import { paymentsSeedData } from './data/payments.seed.js';
-import { reviewsSeedData } from './data/reviews.seed.js';
-import { subscriptionsSeedData } from './data/subscriptions.seed.js';
+import { executeSeed } from './seed-runner.js';
 
 async function seedDatabase() {
   try {
@@ -63,45 +36,35 @@ async function seedDatabase() {
     const reviewRepo = new TypeOrmReviewRepository();
     const subscriptionRepo = new TypeOrmSubscriptionRepository();
 
-    await seedUsers(userRepo);
-    await seedSubscriptionPlans(subscriptionPlanRepo);
-    await seedImages(imageRepo);
-    await seedRestaurants(restaurantRepo, imageRepo);
-    await seedSections(sectionRepo, restaurantRepo);
-    await seedTables(tableRepo, sectionRepo, imageRepo);
-    await seedMenus(menuRepo, restaurantRepo);
-    await seedDishes(dishRepo, restaurantRepo, menuRepo, imageRepo);
-    await seedReservations(
-      reservationRepo,
+    const summary = await executeSeed({
       userRepo,
-      restaurantRepo,
-      tableRepo,
-    );
-    await seedPayments(paymentRepo, userRepo, reservationRepo);
-    await seedReviews(reviewRepo, userRepo, restaurantRepo);
-    await seedSubscriptions(
-      subscriptionRepo,
-      userRepo,
-      restaurantRepo,
       subscriptionPlanRepo,
-    );
+      imageRepo,
+      restaurantRepo,
+      sectionRepo,
+      tableRepo,
+      menuRepo,
+      dishRepo,
+      reservationRepo,
+      paymentRepo,
+      reviewRepo,
+      subscriptionRepo,
+    });
 
     console.log('Proceso de seeding completado exitosamente!');
     console.log('\nResumen:');
-    console.log(`  - Usuarios: ${usersSeedData.length}`);
-    console.log(
-      `  - Planes de suscripción: ${subscriptionPlansSeedData.length}`,
-    );
-    console.log(`  - Imágenes: ${imagesSeedData.length}`);
-    console.log(`  - Restaurantes: ${restaurantsSeedData.length}`);
-    console.log(`  - Secciones: ${sectionsSeedData.length}`);
-    console.log(`  - Mesas: ${tablesSeedData.length}`);
-    console.log(`  - Menús: ${menusSeedData.length}`);
-    console.log(`  - Platos: ${dishesSeedData.length}`);
-    console.log(`  - Reservaciones: ${reservationsSeedData.length}`);
-    console.log(`  - Pagos: ${paymentsSeedData.length}`);
-    console.log(`  - Reseñas: ${reviewsSeedData.length}`);
-    console.log(`  - Suscripciones: ${subscriptionsSeedData.length}`);
+    console.log(`  - Usuarios: ${summary.users}`);
+    console.log(`  - Planes de suscripcion: ${summary.subscriptionPlans}`);
+    console.log(`  - Imagenes: ${summary.images}`);
+    console.log(`  - Restaurantes: ${summary.restaurants}`);
+    console.log(`  - Secciones: ${summary.sections}`);
+    console.log(`  - Mesas: ${summary.tables}`);
+    console.log(`  - Menus: ${summary.menus}`);
+    console.log(`  - Platos: ${summary.dishes}`);
+    console.log(`  - Reservaciones: ${summary.reservations}`);
+    console.log(`  - Pagos: ${summary.payments}`);
+    console.log(`  - Resenas: ${summary.reviews}`);
+    console.log(`  - Suscripciones: ${summary.subscriptions}`);
   } catch (error) {
     console.error('Error durante el seeding:', error);
     throw error;
