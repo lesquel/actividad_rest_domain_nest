@@ -9,7 +9,15 @@ export class TypeOrmPaymentRepository
   extends TypeOrmBaseRepository<Payment, PaymentOrmEntity>
   implements PaymentRepository
 {
-  protected relations = ['reserva', 'usuario'];
+  protected relations = [
+    'reserva',
+    'reserva.usuario',
+    'reserva.restaurante',
+    'reserva.mesa',
+    'reserva.mesa.seccion',
+    'reserva.mesa.seccion.restaurante',
+    'usuario',
+  ];
 
   constructor() {
     super(

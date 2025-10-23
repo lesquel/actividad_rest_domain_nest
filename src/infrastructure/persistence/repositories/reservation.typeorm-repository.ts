@@ -9,7 +9,14 @@ export class TypeOrmReservationRepository
   extends TypeOrmBaseRepository<Reservation, ReservationOrmEntity>
   implements ReservationRepository
 {
-  protected relations = ['usuario', 'restaurante', 'mesa', 'pagos'];
+  protected relations = [
+    'usuario',
+    'restaurante',
+    'mesa',
+    'mesa.seccion',
+    'mesa.seccion.restaurante',
+    'pagos',
+  ];
 
   constructor() {
     super(
