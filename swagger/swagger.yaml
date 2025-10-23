@@ -1752,6 +1752,24 @@ paths:
           description: No se encontró la mesa indicada.
       summary: Eliminar mesa
       tags: *a13
+  /seed:
+    post:
+      description: Executes all database seeders to populate the catalog data set.
+        Intended for development and testing environments.
+      operationId: SeedController_run
+      parameters: []
+      responses:
+        "200":
+          description: Seed completed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeedResponseDto"
+        "500":
+          description: Seed execution failed.
+      summary: Trigger data seed
+      tags:
+        - Seed
 info:
   title: Restaurant Platform API
   description: Colección de endpoints para la gestión integral de restaurantes,
@@ -3296,3 +3314,83 @@ components:
           description: Identificador de la imagen asociada
           format: uuid
           example: 32a8f4eb-0a6d-4e2f-9a0b-467d145a0c7d
+    SeedSummaryDto:
+      type: object
+      properties:
+        users:
+          type: number
+          example: 12
+          description: Total users inserted.
+        subscriptionPlans:
+          type: number
+          example: 4
+          description: Total subscription plans inserted.
+        images:
+          type: number
+          example: 15
+          description: Total images inserted.
+        restaurants:
+          type: number
+          example: 6
+          description: Total restaurants inserted.
+        sections:
+          type: number
+          example: 20
+          description: Total sections inserted.
+        tables:
+          type: number
+          example: 45
+          description: Total tables inserted.
+        menus:
+          type: number
+          example: 9
+          description: Total menus inserted.
+        dishes:
+          type: number
+          example: 35
+          description: Total dishes inserted.
+        reservations:
+          type: number
+          example: 18
+          description: Total reservations inserted.
+        payments:
+          type: number
+          example: 18
+          description: Total payments inserted.
+        reviews:
+          type: number
+          example: 10
+          description: Total reviews inserted.
+        subscriptions:
+          type: number
+          example: 5
+          description: Total subscriptions inserted.
+      required:
+        - users
+        - subscriptionPlans
+        - images
+        - restaurants
+        - sections
+        - tables
+        - menus
+        - dishes
+        - reservations
+        - payments
+        - reviews
+        - subscriptions
+    SeedResponseDto:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Seed executed successfully.
+        durationMs:
+          type: number
+          example: 1240
+          description: Total execution time in milliseconds.
+        summary:
+          $ref: "#/components/schemas/SeedSummaryDto"
+      required:
+        - message
+        - durationMs
+        - summary
