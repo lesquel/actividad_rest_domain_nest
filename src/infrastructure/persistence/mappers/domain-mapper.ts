@@ -400,17 +400,17 @@ export class ReservationMapper {
         'ReservationOrmEntity requires a table relation to map to domain.',
       );
     }
-    const userDomain =
+    const userDomain: User =
       options.user ??
       (entity.usuario
         ? UserMapper.toDomain(entity.usuario, { depth: 'none' })
-        : undefined);
-
-    if (!userDomain) {
-      throw new Error(
-        'ReservationOrmEntity requires a user relation to map to domain.',
-      );
-    }
+        : undefined) ??
+      ({
+        id: '',
+        email: '',
+        names: '',
+        phone: '',
+      } as User);
 
     const domain: Reservation = {
       id: entity.id,
