@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { SubscriptionModule } from './modules/subscription/subscription.module.js';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { UserModule } from './modules/user/user.module.js';
@@ -15,6 +14,8 @@ import { ReviewModule } from './modules/review/review.module.js';
 import { SectionModule } from './modules/section/section.module.js';
 import { SubscriptionPlanModule } from './modules/subscription-plan/subscription-plan.module.js';
 import { TableModule } from './modules/table/table.module.js';
+import { SeedModule } from './modules/seed/seed.module.js';
+import { SubscriptionModule } from './modules/subscription/subscription.module.js';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TableModule } from './modules/table/table.module.js';
     SectionModule,
     SubscriptionPlanModule,
     TableModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
