@@ -9,7 +9,17 @@ export class TypeOrmReviewRepository
   extends TypeOrmBaseRepository<Review, ReviewOrmEntity>
   implements ReviewRepository
 {
-  protected relations = ['usuario', 'restaurante'];
+  protected relations = [
+    'usuario',
+    'restaurante',
+    'restaurante.secciones',
+    'restaurante.reservas',
+    'restaurante.reservas.usuario',
+    'restaurante.reservas.mesa',
+    'restaurante.reservas.mesa.seccion',
+    'restaurante.reservas.mesa.seccion.restaurante',
+    'restaurante.resenas',
+  ];
 
   constructor() {
     super(

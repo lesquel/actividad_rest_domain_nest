@@ -50,6 +50,7 @@ export class UserMapper {
       domain.reservations = entity.reservas?.map((reserva) =>
         ReservationMapper.toDomain(reserva, {
           depth: 'none',
+          user: domain,
         }),
       );
       domain.payments = entity.pagos?.map((pago) =>
@@ -360,6 +361,7 @@ export class LayoutObjectMapper {
 interface ReservationMapperOptions extends MapperOptions {
   restaurant?: Restaurant;
   table?: DiningTable;
+  user?: User;
 }
 
 export class ReservationMapper {
@@ -398,9 +400,21 @@ export class ReservationMapper {
         'ReservationOrmEntity requires a table relation to map to domain.',
       );
     }
+    const userDomain =
+      options.user ??
+      (entity.usuario
+        ? UserMapper.toDomain(entity.usuario, { depth: 'none' })
+        : undefined);
+
+    if (!userDomain) {
+      throw new Error(
+        'ReservationOrmEntity requires a user relation to map to domain.',
+      );
+    }
+
     const domain: Reservation = {
       id: entity.id,
-      user: UserMapper.toDomain(entity.usuario),
+      user: userDomain,
       restaurant: restaurantDomain,
       table: tableDomain,
       reservationDate: new Date(entity.fechaReserva),
