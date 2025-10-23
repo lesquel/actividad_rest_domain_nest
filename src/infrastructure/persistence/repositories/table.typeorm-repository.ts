@@ -14,6 +14,12 @@ export class TypeOrmTableRepository
     'seccion.restaurante',
     'imagen',
     'reservaciones',
+    'reservaciones.usuario',
+    'reservaciones.restaurante',
+    'reservaciones.mesa',
+    'reservaciones.mesa.seccion',
+    'reservaciones.mesa.seccion.restaurante',
+    'reservaciones.pagos',
   ];
 
   constructor() {

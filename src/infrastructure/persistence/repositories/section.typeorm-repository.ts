@@ -12,6 +12,15 @@ export class TypeOrmSectionRepository
   protected relations = [
     'restaurante',
     'mesas',
+    'mesas.seccion',
+    'mesas.seccion.restaurante',
+    'mesas.reservaciones',
+    'mesas.reservaciones.usuario',
+    'mesas.reservaciones.restaurante',
+    'mesas.reservaciones.mesa',
+    'mesas.reservaciones.mesa.seccion',
+    'mesas.reservaciones.mesa.seccion.restaurante',
+    'mesas.reservaciones.pagos',
     'seccionObjetos',
     'seccionObjetos.objeto',
   ];

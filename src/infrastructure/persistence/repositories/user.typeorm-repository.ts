@@ -9,7 +9,25 @@ export class TypeOrmUserRepository
   extends TypeOrmBaseRepository<User, UserOrmEntity>
   implements UserRepository
 {
-  protected relations = ['reservas', 'pagos', 'suscripciones', 'resenas'];
+  protected relations = [
+    'reservas',
+    'reservas.restaurante',
+    'reservas.usuario',
+    'reservas.mesa',
+    'reservas.mesa.seccion',
+    'reservas.mesa.seccion.restaurante',
+    'pagos',
+    'pagos.reserva',
+    'pagos.reserva.restaurante',
+    'pagos.reserva.mesa',
+    'pagos.reserva.mesa.seccion',
+    'pagos.reserva.mesa.seccion.restaurante',
+    'suscripciones',
+    'suscripciones.restaurante',
+    'suscripciones.plan',
+    'resenas',
+    'resenas.restaurante',
+  ];
 
   constructor() {
     super(
