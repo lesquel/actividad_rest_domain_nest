@@ -1,5 +1,5 @@
-import type { Menu } from '../../../domain/entities/menu.entity.js';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import type { Menu } from '../../../domain/entities/menu.entity.js';
 
 export class MenuResponseDto {
   @ApiProperty({
@@ -53,6 +53,7 @@ export class MenuResponseDto {
     ],
   })
   dishIds!: string[];
+
   static fromDomain(menu: Menu): MenuResponseDto {
     const dto = new MenuResponseDto();
     dto.id = menu.id;
@@ -61,6 +62,7 @@ export class MenuResponseDto {
     dto.description = menu.description;
     dto.price = menu.price;
     dto.coverImageUrl = menu.coverImageUrl;
+    dto.dishIds = menu.dishes?.map((dish) => dish.id) ?? [];
     return dto;
   }
 }
