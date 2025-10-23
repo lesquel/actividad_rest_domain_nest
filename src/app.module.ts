@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
 import { SubscriptionModule } from './modules/subscription/subscription.module.js';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 import { UserModule } from './modules/user/user.module.js';
 import { DishModule } from './modules/dish/dish.module.js';
 import { ImageModule } from './modules/image/image.module.js';

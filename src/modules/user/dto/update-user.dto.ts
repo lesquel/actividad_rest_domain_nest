@@ -16,7 +16,7 @@ export class UpdateUserDto {
   @ApiPropertyOptional({
     description: 'Nombre(s) actualizados del usuario',
     maxLength: 100,
-    example: 'Ana García',
+    example: 'Ana Garcia',
   })
   @IsOptional()
   @IsString()
