@@ -1,5 +1,18 @@
 # API REST - Sistema de Reservas de Restaurantes
 
+## 📋 Objetivo de la práctica
+
+Desarrollar una API REST completa para el sistema **MesaYa** utilizando **NestJS** y **TypeORM**. Esta práctica implementa:
+
+* CRUD completo para todas las entidades del sistema
+* Documentación automática con Swagger/OpenAPI
+* Validación de datos con DTOs y class-validator
+* Arquitectura modular y escalable
+* Integración con base de datos mediante TypeORM
+* Sistema de seed para datos de prueba
+
+Esta API proporciona todos los endpoints necesarios para gestionar restaurantes, reservas, menús, usuarios, pagos y suscripciones.
+
 ## 📋 Descripción
 
 API REST completa para el sistema **MesaYa**, construida con **NestJS** y **TypeORM**. Esta API proporciona todos los endpoints necesarios para gestionar restaurantes, reservas, menús, usuarios, pagos y suscripciones.
@@ -125,6 +138,44 @@ El proyecto genera automáticamente:
 * `swagger/swagger.json` - Especificación en formato JSON
 * `swagger/swagger.yaml` - Especificación en formato YAML
 
+## 🌐 Puerto y rutas principales
+
+* **Puerto de desarrollo**: `3000`
+* **Puerto de producción**: Configurable via variable `PORT`
+
+### Rutas principales de prueba
+
+```http
+# Health check
+GET http://localhost:3000/api/health
+
+# Documentación interactiva
+GET http://localhost:3000/docs
+
+# Usuarios
+GET http://localhost:3000/user
+POST http://localhost:3000/user
+GET http://localhost:3000/user/:id
+PATCH http://localhost:3000/user/:id
+DELETE http://localhost:3000/user/:id
+
+# Restaurantes
+GET http://localhost:3000/restaurant
+POST http://localhost:3000/restaurant
+GET http://localhost:3000/restaurant/:id
+
+# Reservas
+GET http://localhost:3000/reservation
+POST http://localhost:3000/reservation
+GET http://localhost:3000/reservation/:id
+
+# Menús y platillos
+GET http://localhost:3000/menu
+GET http://localhost:3000/dish
+
+# Más endpoints disponibles en /docs
+```
+
 ## 🗄️ Base de datos
 
 El proyecto utiliza **TypeORM** con **SQLite** por defecto.
@@ -204,25 +255,6 @@ Sistema de calificaciones y comentarios
 ### Subscription & Subscription Plan
 
 Planes de suscripción para restaurantes
-
-## 🧪 Testing
-
-```powershell
-# Pruebas unitarias
-npm run test
-
-# Pruebas con watch mode
-npm run test:watch
-
-# Pruebas de cobertura
-npm run test:cov
-
-# Pruebas e2e
-npm run test:e2e
-
-# Debug de pruebas
-npm run test:debug
-```
 
 ## 🎨 Código limpio
 
